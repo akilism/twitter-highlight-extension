@@ -1,0 +1,19 @@
+{
+  "name": "Twitter Article Highlighter",
+  "description": "Post highlighted article text to twitter",
+  "version": "0.1",
+  "permissions": ["activeTab", "contextMenus", "storage", "tabs", "http://*/*", "https://*/*"],
+  "icons": {
+    "16": "icon-16.png"
+    },
+  "background": {
+    "scripts": ["codebird.js",
+                "twitter.js",
+                "highlight_menu.js"]
+  },
+  "options_ui": {
+    "page": "options.html",
+    "chrome_style": true
+  },
+  "manifest_version": 2
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <style>
+  .screen {
+    /*width: 320px;*/
+    height: 120px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  #btnConnect,
+  #btnDisconnect,
+  #btnSave {
+    margin: 0 auto;
+    border: none;
+    border-radius: 3px;
+    text-shadow: none;
+    color: #FFF;
+    background-image: none;
+    padding: 10px 10px;
+  }
+
+  #btnConnect {
+    background-color: #00cc00;
+  }
+
+  #btnDisconnect {
+    background-color: #cc0000;
+  }
+
+  #btnSave {
+    margin-left: 5px;
+    background-color: #0000cc;
+  }
+
+  </style>
+</head>
+<body>
+  <div id="connect" class="screen">
+    <button id="btnConnect">Connect Twitter Account</button>
+  </div>
+  <div id="pin-input" class="screen">
+    <label>
+    Twitter PIN: <input type="text" id="twitterPin">
+    </label>
+    <button id="btnSave">Save</button>
+  </div>
+  <div id="disconnect" class="screen">
+    <button id="btnDisconnect">Disconnect Twitter Account</button>
+  </div>
+  <script src="codebird.js" language="javascript"></script>
+  <script src="twitter.js" language="javascript"></script>
+  <script src="options.js" language="javascript"></script>
+</body>
+</html>

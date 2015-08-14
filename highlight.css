@@ -5,20 +5,25 @@
   z-index: 1000;
 }
 
-#tweetHighlightInput {
-  border: 2px solid black;
-  background-color: rgba(255, 255, 255, 0.65);
+#tweetHighlightOverlay {
   position: fixed;
-  top: 25%;
+  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  margin: 0 auto;
+  background-color: rgba(0, 0, 0, 0.65);
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
   display: none;
   z-index: 1000;
-  width: 513px;
-  padding-left: 5px;
-  height: 175px;
-  padding-top: 15px;
+  overflow: hidden;
+}
+
+#tweetHighlightInput {
+  border: 2px solid black;
+  background-color: #fff;
+  padding: 15px;
 }
 
 #tweetHighlightStatus {
@@ -44,6 +49,24 @@
   background-color: #00cc00;
 }
 
+
+#tweetHighlightButton.disabled {
+  background-color: #333;
+}
+
 #tweetHighlightCancelButton {
   background-color: #cc0000;
+}
+
+.tweet-highlight-heading {
+  font-size: 1.125em
+  color: #000;
+}
+
+.tweet-char-count.good {
+  color: #17B606;
+}
+
+.tweet-char-count.error {
+  color: #ED0F0F;
 }

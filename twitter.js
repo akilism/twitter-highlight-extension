@@ -16,7 +16,7 @@ var twitter = (function(){
   var oauthToken, oauthTokenSecret;
   var cb = new Codebird;
   cb.setUseProxy(false);
-  cb.setConsumerKey("ignk5LLVIiMfMJCjlc7B5WPcq","GqU12WKpWjgM9FXaBPDKG8lbdS7ZNabgJN5Vtnzo04wsM0DQ1A");
+  cb.setConsumerKey("key","secret");
 
   var setToken = function(oauthToken, oauthTokenSecret) {
     cb.setToken(oauthToken, oauthTokenSecret);

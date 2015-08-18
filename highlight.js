@@ -3,10 +3,11 @@
       grid,
       input,
       initialClick,
-      finalClick;
+      finalClick,
+      url = {display: '', url: ''};
 
-  var sendClickMessage = function(initialClick, finalClick, status) {
-    chrome.runtime.sendMessage({initialClick: initialClick, finalClick: finalClick, status: status});
+  var sendClickMessage = function(message) {
+    chrome.runtime.sendMessage(message);
   };
 
   var newGrid = function() {
@@ -66,20 +67,29 @@
     statusText.removeEventListener("change", updateCharCount);
   };
 
-  var showInput = function(initialClick, finalClick, status) {
+  var getStatus = function(text) {
+    if(text.toLowerCase().indexOf(url.display.toLowerCase()) !== -1) {
+      return text.replace(url.display, url.url);
+    } else {
+      return text;
+    }
+  }
+
+  var tweetClick = function () {
+    var statusText = document.querySelector("#tweetHighlightStatus");
+    var button = document.querySelector("#tweetHighlightButton");
+    var status = getStatus(statusText.value);
+    hideInput();
+    button.removeEventListener("click", tweetClick);
+    sendClickMessage({status: status});
+  };
+
+  var showInput = function(status) {
     var overlay = document.querySelector("#tweetHighlightOverlay");
     overlay.style.display = "flex";
 
     var button = document.querySelector("#tweetHighlightButton");
-    button.addEventListener("click", function tweetClick() {
-      var statusText = document.querySelector("#tweetHighlightStatus");
-      var status = statusText.value;
-      hideInput();
-      button.removeEventListener("click", tweetClick);
-      setTimeout(function() {
-        sendClickMessage(initialClick, finalClick, status);
-      }, 150);
-    });
+    button.addEventListener("click", tweetClick);
 
     var statusText = document.querySelector("#tweetHighlightStatus");
     statusText.addEventListener("keydown", updateCharCount, false);
@@ -100,6 +110,16 @@
       button.setAttribute("disabled", true);
       button.classList.add("disabled");
     }
+  };
+
+  var setUrl = function() {
+    url.url = window.location.href;
+    if(url.url.length > 40) {
+      url.display = url.url.substring(0, 37) + '...';
+    } else {
+      url.display = url.url;
+    }
+    console.log(url);
   };
 
   var createInput = function() {
@@ -149,18 +169,24 @@
     createGrid(initialClick);
     document.removeEventListener("mousedown", captureInitialClick);
     document.addEventListener("mousemove", sizeGrid, false);
-    document.addEventListener("mousedown", captureFinalClick, false);
+    document.addEventListener("mouseup", captureFinalClick, false);
   };
 
   var captureFinalClick = function(evt) {
     evt.preventDefault();
     removeGrid();
     finalClick = [evt.clientX, evt.clientY];
-    var status = document.title + " - " + window.location.href;
+    setUrl();
+    var status = document.title + " - " + url.display;
     document.removeEventListener("mousemove", sizeGrid);
-    document.removeEventListener("mousedown", captureFinalClick);
-    if(!input) { createInput(); }
-    showInput(initialClick, finalClick, status);
+    document.removeEventListener("mouseup", captureFinalClick);
+    setTimeout(function() {
+        sendClickMessage({initialClick: initialClick, finalClick: finalClick});
+        setTimeout(function() {
+          if(!input) { createInput(); }
+          showInput(status);
+        }, 150);
+      }, 150);
   };
 
   document.addEventListener("mousedown", captureInitialClick, false);

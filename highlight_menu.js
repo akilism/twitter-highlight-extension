@@ -1,6 +1,7 @@
 (function() {
 
   var authItems;
+  var mediaIds = [];
 
   // Inject the content script and css into the current page.
   // Handles highlighting the text and capturing the selection
@@ -93,8 +94,9 @@
   };
 
   var tweetImage = function(status, mediaId) {
-    // twitter.setAuthItems(authItems);
-    return twitter.sendStatus({status: status, media_ids: mediaId});
+    twitter.setAuthItems(authItems);
+    console.log(status, status.length);
+    return twitter.sendStatus({media_ids: mediaId, status: status});
   };
 
 
@@ -104,34 +106,39 @@
 
   var setMenu = function() {
     chrome.contextMenus.removeAll();
-    return twitter.getLocalAuth().then(function(items) {
-      twitter.setAuthItems(items);
-      authItems = items;
-      chrome.contextMenus.create({ title: "Post highlight to Twitter.",
-        id: "postTwitter",
-        contexts: ["all"],
-        onclick:  insertContentScript });
-    }).catch(function() {
-      chrome.contextMenus.create({ title: "Please connect a Twitter Account.",
-        contexts: ["all"],
-        id: "postTwitter",
-        onclick:  null });
-    });
+    return twitter.getLocalAuth()
+      .then(function(items) {
+        twitter.setAuthItems(items);
+        authItems = items;
+        chrome.contextMenus.create({ title: "Post highlight to Twitter.",
+          id: "postTwitter",
+          contexts: ["all"],
+          onclick:  insertContentScript });
+      }).catch(function() {
+        chrome.contextMenus.create({ title: "Please connect a Twitter Account.",
+          contexts: ["all"],
+          id: "postTwitter",
+          onclick:  null });
+      });
   };
 
 
   chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
       if (request.initialClick && request.finalClick) {
+        mediaIds = [];
         return captureImage(request.initialClick, request.finalClick)
-        .then(uploadImage)
-        .then(function(reply) {
-          var status = (request.status) ? request.status : "";
-          return tweetImage(status, reply.media_id_string);
-        })
-        .catch(function(err) {
-          console.error(err);
-        });
+          .then(uploadImage)
+          .then(function(reply) {
+            mediaIds.push(reply.media_id_string);
+            return mediaIds;
+          })
+          .catch(function(err) {
+            console.error(err);
+          });
+      } else if (request.status) {
+        var status = (request.status) ? request.status : "";
+        return tweetImage(status, mediaIds.join(",")).catch(function(err) { console.error(err); });
       } else if (request.auth) {
         setMenu();
       }
